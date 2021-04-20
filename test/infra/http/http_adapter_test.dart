@@ -17,10 +17,14 @@ class HttpAdapter {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
+
     final jsonBody = body != null ? jsonEncode(body) : null;
-    final response =
-        await client.post(Uri(path: url), headers: headers, body: jsonBody);
-    return response.body.isNotEmpty ? jsonDecode(response.body) : null;
+    final response = await client.post(Uri(path: url), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    }
+    return null;
   }
 }
 
@@ -44,7 +48,7 @@ void main() {
         ));
 
     void mockResponse(int statusCode, {String body = '{"any":"any"}'}) {
-      mockRequest().thenAnswer((_) async => Response(body, 200));
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
 
     setUp(() {
@@ -87,6 +91,13 @@ void main() {
 
     test('Should return null on 204', () async {
       mockResponse(204, body: '');
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, null);
+    });
+
+    test('Should return null on 204 with data', () async {
+      mockResponse(204);
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, null);
