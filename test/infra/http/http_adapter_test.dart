@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
@@ -9,25 +11,29 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<void> request({@required String url, @required String method}) async {
+  Future<void> request({@required String url, @required String method, Map body}) async {
     final headers = {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    await client.post(Uri(path: url), headers: headers);
+    await client.post(Uri(path: url), headers: headers, body: jsonEncode(body));
   }
 }
 
 class ClientSpy extends Mock implements Client {}
 
 void main() {
+  HttpAdapter sut;
+  ClientSpy client;
+  String url;
+  setUp(() {
+    client = ClientSpy();
+    url = faker.internet.httpUrl();
+    sut = HttpAdapter(client);
+  });
   group('post', () {
     test('Should post with correct values', () async {
-      final url = faker.internet.httpUrl();
-      final client = ClientSpy();
-      final sut = HttpAdapter(client);
-
-      await sut.request(url: url, method: 'post');
+      await sut.request(url: url, method: 'post', body: {'any': 'any'});
 
       verify(client.post(
         Uri(path: url),
@@ -35,6 +41,7 @@ void main() {
           'content-type': 'application/json',
           'accept': 'application/json',
         },
+        body: '{"any":"any"}',
       ));
     });
   });
