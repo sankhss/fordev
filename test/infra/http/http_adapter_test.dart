@@ -6,7 +6,6 @@ import 'package:test/test.dart';
 import 'package:fordev/data/http/http.dart';
 import 'package:fordev/infra/http/http_adapter.dart';
 
-
 class ClientSpy extends Mock implements Client {}
 
 void main() {
@@ -35,9 +34,10 @@ void main() {
           body: anyNamed('body'),
         ));
 
-    void mockResponse(int statusCode, {String body = '{"any":"any"}'}) {
-      mockRequest().thenAnswer((_) async => Response(body, statusCode));
-    }
+    void mockResponse(int statusCode, {String body = '{"any":"any"}'}) =>
+        mockRequest().thenAnswer((_) async => Response(body, statusCode));
+
+    void mockError() => mockRequest().thenThrow(Exception());
 
     setUp(() {
       mockResponse(200);
@@ -121,6 +121,13 @@ void main() {
 
     test('Should throw ServerError on 500', () async {
       mockResponse(500);
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test('Should throw ServerError on post exception', () async {
+      mockError();
       final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.serverError));
