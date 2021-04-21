@@ -95,5 +95,12 @@ void main() {
 
       expect(future, throwsA(HttpError.unauthorized));
     });
+
+    test('Should throw ServerError on 500', () async {
+      mockResponse(500);
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 }
