@@ -51,7 +51,7 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: null,
             child: Text(
               'Enter'.toUpperCase(),
             ),
