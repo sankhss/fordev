@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../pages/pages.dart';
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
     final primaryColor = Color.fromRGBO(202, 157, 215, 1.0);
     final primaryColorLight = Color.fromRGBO(250, 203, 211, 1.0);
     final primaryColorDark = Color.fromRGBO(133, 126, 187, 1.0);
