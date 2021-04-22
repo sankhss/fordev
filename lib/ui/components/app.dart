@@ -16,7 +16,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '4Dev',
-      home: LoginPage(),
+      home: LoginPage(null),
       theme: ThemeData(
         primaryColor: primaryColor,
         primaryColorLight: primaryColorLight,
