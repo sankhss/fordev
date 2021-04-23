@@ -164,4 +164,28 @@ main() {
         tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(enterButton.enabled, true);
   });
+
+  testWidgets('Should disable button if form is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final enterButton =
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(enterButton.enabled, false);
+  });
+
+  testWidgets('Should disable button if form is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(null);
+    await tester.pump();
+
+    final enterButton =
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(enterButton.enabled, false);
+  });
 }
