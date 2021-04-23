@@ -11,18 +11,23 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 main() {
   LoginPresenter presenter;
   StreamController emailErrorController;
+  StreamController passwordErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
     emailErrorController = StreamController<String>();
     when(presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
+    passwordErrorController = StreamController<String>();
+    when(presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
 
   tearDown(() {
     emailErrorController.close();
+    passwordErrorController.close();
   });
 
   testWidgets('Should load with correct initial state',
@@ -95,6 +100,48 @@ main() {
     expect(
         find.descendant(
           of: find.bySemanticsLabel('Email'),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'only one text child means it has no errors');
+  });
+
+  testWidgets('Should present error if password is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add('error');
+    await tester.pump();
+
+    expect(find.text('error'), findsOneWidget);
+  });
+
+  testWidgets('Should present no error if password is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add(null);
+    await tester.pump();
+
+    expect(
+        find.descendant(
+          of: find.bySemanticsLabel('Password'),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'only one text child means it has no errors');
+  });
+
+  testWidgets('Should present no error if password is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add('');
+    await tester.pump();
+
+    expect(
+        find.descendant(
+          of: find.bySemanticsLabel('Password'),
           matching: find.byType(Text),
         ),
         findsOneWidget,
