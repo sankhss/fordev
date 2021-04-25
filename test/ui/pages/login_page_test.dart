@@ -14,6 +14,7 @@ main() {
   StreamController passwordErrorController;
   StreamController isFormValidController;
   StreamController isLoadingController;
+  StreamController loginErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
@@ -34,6 +35,10 @@ main() {
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
 
+    loginErrorController = StreamController<String>();
+    when(presenter.loginErrorStream)
+        .thenAnswer((_) => loginErrorController.stream);
+
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
@@ -43,6 +48,7 @@ main() {
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    loginErrorController.close();
   });
 
   testWidgets('Should load with correct initial state',
@@ -219,8 +225,7 @@ main() {
     verify(presenter.auth()).called(1);
   });
 
-  testWidgets('Should present loading',
-      (WidgetTester tester) async {
+  testWidgets('Should present loading', (WidgetTester tester) async {
     await loadPage(tester);
 
     isLoadingController.add(true);
@@ -229,8 +234,7 @@ main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('Should hide loading',
-      (WidgetTester tester) async {
+  testWidgets('Should hide loading', (WidgetTester tester) async {
     await loadPage(tester);
 
     isLoadingController.add(true);
@@ -239,5 +243,15 @@ main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should show error message if login fails',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    loginErrorController.add('error');
+    await tester.pump();
+
+    expect(find.text('error'), findsOneWidget);
   });
 }

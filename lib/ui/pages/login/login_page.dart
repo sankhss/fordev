@@ -14,24 +14,39 @@ class LoginPage extends StatelessWidget {
       body: Builder(builder: (context) {
         presenter.isLoadingStream.listen((isLoading) {
           if (isLoading) {
-            showDialog(context: context, barrierDismissible: false, builder: (ctx) => SimpleDialog(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 10.0),
-                    Text('Loading', textAlign: TextAlign.center),
-                  ],
-                ),
-              ],
-            ));
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (ctx) => SimpleDialog(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 10.0),
+                            Text('Loading', textAlign: TextAlign.center),
+                          ],
+                        ),
+                      ],
+                    ));
           } else {
             if (Navigator.canPop(context)) {
               Navigator.of(context).pop();
             }
           }
         });
+
+        presenter.loginErrorStream.listen((error) {
+          if (error != null && (error as String).isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(error),
+                backgroundColor: Colors.red[900],
+              ),
+            );
+          }
+        });
+
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
