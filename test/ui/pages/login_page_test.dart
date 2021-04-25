@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:mockito/mockito.dart';
 
+import 'page.dart';
+
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 main() {
@@ -16,15 +18,19 @@ main() {
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
+
     emailErrorController = StreamController<String>();
     when(presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
+
     passwordErrorController = StreamController<String>();
     when(presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
+
     isFormValidController = StreamController<bool>();
     when(presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
+
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
@@ -187,5 +193,23 @@ main() {
     final enterButton =
         tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(enterButton.enabled, false);
+  });
+
+  testWidgets('Should call authentication on form submit',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final finder = find.byType(ElevatedButton);
+
+    await tester.ensureVisible(finder);
+    await tester.pump();
+
+    await tester.tap(finder);
+    await tester.pump();
+
+    verify(presenter.auth()).called(1);
   });
 }

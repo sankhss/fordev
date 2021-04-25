@@ -57,7 +57,7 @@ class LoginPage extends StatelessWidget {
                       stream: presenter.isFormValidStream,
                       builder: (context, snapshot) {
                         return ElevatedButton(
-                          onPressed: snapshot.data == true ? () {} : null,
+                          onPressed: snapshot.data == true ? presenter.auth : null,
                           child: Text(
                             'Enter'.toUpperCase(),
                           ),
@@ -67,7 +67,7 @@ class LoginPage extends StatelessWidget {
                     TextButton.icon(
                       onPressed: () {},
                       icon: Icon(Icons.person),
-                      label: Text('Criar Conta'),
+                      label: Text('Create account Conta'),
                     ),
                   ],
                 ),
