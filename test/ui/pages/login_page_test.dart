@@ -6,8 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:mockito/mockito.dart';
 
-import 'page.dart';
-
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 main() {
@@ -15,6 +13,7 @@ main() {
   StreamController emailErrorController;
   StreamController passwordErrorController;
   StreamController isFormValidController;
+  StreamController isLoadingController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
@@ -31,6 +30,10 @@ main() {
     when(presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
 
+    isLoadingController = StreamController<bool>();
+    when(presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
+
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
@@ -39,6 +42,7 @@ main() {
     emailErrorController.close();
     passwordErrorController.close();
     isFormValidController.close();
+    isLoadingController.close();
   });
 
   testWidgets('Should load with correct initial state',
@@ -58,6 +62,8 @@ main() {
     final enterButton =
         tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(enterButton.enabled, false);
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should call validate with correct values',
@@ -211,5 +217,27 @@ main() {
     await tester.pump();
 
     verify(presenter.auth()).called(1);
+  });
+
+  testWidgets('Should present loading',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    isLoadingController.add(false);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
