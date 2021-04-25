@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         widget.presenter.loginErrorStream.listen((error) {
-          if (error != null && (error as String).isNotEmpty) {
+          if (error != null && error.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(error),
