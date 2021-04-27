@@ -14,10 +14,10 @@ void main() {
   });
 
   test('Should return error if value is empty', () {
-    expect(sut.validate(''), 'Required.');
+    expect(sut.validate(''), 'Required');
   });
 
   test('Should return error if value is null', () {
-    expect(sut.validate(null), 'Required.');
+    expect(sut.validate(null), 'Required');
   });
 }

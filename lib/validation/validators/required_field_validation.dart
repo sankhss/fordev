@@ -9,7 +9,7 @@ class RequiredFieldValidation extends Equatable implements FieldValidation {
 
   @override
   String validate(String value) {
-    return value == null || value.isEmpty ? 'Required.' : null;
+    return value == null || value.isEmpty ? 'Required' : null;
   }
 
   @override
