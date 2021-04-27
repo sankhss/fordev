@@ -41,7 +41,16 @@ main() {
     sut.emailErrorStream
         .listen(expectAsync1((error) => expect(error, 'error')));
     sut.isFormValidStream
-        .listen(expectAsync1((error) => expect(error, false)));
+        .listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+    sut.validateEmail(email);
+    sut.validateEmail(email);
+  });
+
+  test('Should emit null if validation succeed', () {
+    sut.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
     sut.validateEmail(email);
     sut.validateEmail(email);
