@@ -22,7 +22,6 @@ void main() {
 
   setUp((){
     sut = EmailValidation('any');
-    email = faker.internet.email();
   });
 
   test('Should return null if email is empty', () {
@@ -34,6 +33,10 @@ void main() {
   });
 
   test('Should return null if email is valid', () {
-    expect(sut.validate(email), null);
+    expect(sut.validate(faker.internet.email()), null);
+  });
+
+  test('Should return error if email is invalid', () {
+    expect(sut.validate('invalid'), 'This is not a valid email.');
   });
 }
