@@ -5,11 +5,15 @@ import 'package:test/test.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
 
+import 'package:fordev/domain/usecases/usecases.dart';
+
 class ValidationSpy extends Mock implements Validation {}
+class AuthenticationSpy extends Mock implements Authentication {}
 
 main() {
   StreamLoginPresenter sut;
   Validation validation;
+  Authentication authentication;
   String email;
   String password;
 
@@ -24,7 +28,8 @@ main() {
 
   setUp(() {
     validation = ValidationSpy();
-    sut = StreamLoginPresenter(validation: validation);
+    authentication = AuthenticationSpy();
+    sut = StreamLoginPresenter(validation: validation, authentication: authentication);
     email = faker.internet.email();
     password = faker.internet.password();
 
@@ -110,5 +115,14 @@ main() {
     sut.validateEmail(email);
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
+  });
+
+  test('Should call authentication', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(authentication.auth(AuthenticationParams(email: email, secret: password))).called(1);
   });
 }
