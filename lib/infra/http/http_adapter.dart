@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
@@ -16,15 +16,15 @@ class HttpAdapter {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    final uri = Uri(path: url);
+    final uri = Uri.parse(url);
     final jsonBody = body != null ? jsonEncode(body) : null;
     var response = Response('', 500);
 
     try {
       if (method == 'post') {
-      response = await client.post(uri, headers: headers, body: jsonBody);
-    }
-    } catch(_) {
+        response = await client.post(uri, headers: headers, body: jsonBody);
+      }
+    } catch (_) {
       throw HttpError.serverError;
     }
 
