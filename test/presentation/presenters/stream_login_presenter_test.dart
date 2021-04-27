@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
 
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 
@@ -29,6 +30,9 @@ main() {
 
   void mockAuthentication() =>
       mockAuthenticationCall().thenAnswer((_) async => Account(faker.guid.guid()));
+
+  void mockAuthenticationError(DomainError error) =>
+      mockAuthenticationCall().thenThrow(error);
 
   setUp(() {
     validation = ValidationSpy();
@@ -140,6 +144,17 @@ main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.auth();
+  });
+
+  test('Should emit correct events on invalid credentials error', () async {
+    mockAuthenticationError(DomainError.invalidCredentials);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.loginErrorStream.listen(expectAsync1((error) => expect(error, DomainError.invalidCredentials.description)));
 
     await sut.auth();
   });
