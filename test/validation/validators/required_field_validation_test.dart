@@ -12,7 +12,7 @@ class RequiredFieldValidation implements FieldValidation {
 
   @override
   String validate(String value) {
-    return null;
+    return value == null || value.isEmpty ? 'Required.' : null;
   }
 }
 
