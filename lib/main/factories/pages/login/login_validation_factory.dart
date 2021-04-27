@@ -1,3 +1,4 @@
+import 'package:fordev/main/builders/builders.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../presentation/protocols/protocols.dart';
@@ -9,7 +10,6 @@ Validation createLoginValidation() =>
 
 @visibleForTesting
 List<FieldValidation> createLoginValidationsList() => [
-      RequiredFieldValidation('email'),
-      EmailValidation('email'),
-      RequiredFieldValidation('password'),
+      ...ValidationBuilder.field('email').email().required().build(),
+      ...ValidationBuilder.field('password').required().build(),
     ];

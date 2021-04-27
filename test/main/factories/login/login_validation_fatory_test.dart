@@ -6,8 +6,8 @@ import 'package:fordev/main/factories/pages/pages.dart';
 void main() {
   test('Should return correct validations', () {
     expect(createLoginValidationsList(), [
-      RequiredFieldValidation('email'),
       EmailValidation('email'),
+      RequiredFieldValidation('email'),
       RequiredFieldValidation('password'),
     ]);
   });
