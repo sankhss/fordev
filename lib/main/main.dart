@@ -16,14 +16,22 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '4Dev',
-      theme: createAppTheme(),
-      initialRoute: '/login',
-      getPages: [
-        GetPage(name: '/login', page: createLoginPage),
-      ],
+    return GestureDetector(
+      onTap: () {
+        final currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus.unfocus();
+        }
+      },
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: '4Dev',
+        theme: createAppTheme(),
+        initialRoute: '/login',
+        getPages: [
+          GetPage(name: '/login', page: createLoginPage),
+        ],
+      ),
     );
   }
 }
