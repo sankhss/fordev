@@ -8,8 +8,8 @@ enum DomainError {
 extension DomainErrorProperties on DomainError {
   String get description {
     switch (this) {
-      case DomainError.invalidCredentials: return 'Credenciais inválidas.';
-      default: return 'Erro inesperado.';
+      case DomainError.invalidCredentials: return 'Invalid credentials.';
+      default: return 'Unexpected error. Try again later.';
     }
   }
 }

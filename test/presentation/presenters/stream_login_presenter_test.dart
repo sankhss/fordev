@@ -158,4 +158,15 @@ main() {
 
     await sut.auth();
   });
+
+  test('Should emit correct events on unexpected error', () async {
+    mockAuthenticationError(DomainError.unexpected);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.loginErrorStream.listen(expectAsync1((error) => expect(error, DomainError.unexpected.description)));
+
+    await sut.auth();
+  });
 }
