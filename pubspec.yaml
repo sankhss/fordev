@@ -1,6 +1,6 @@
 name: fordev
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -10,25 +10,25 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  http:
-  provider:
-  equatable:
-  get:
+  equatable: 
+  flutter_secure_storage:
+  get: 
+  http: 
+  provider: 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons:
-  test: 
-  mockito: 
   faker: 
+  flutter_launcher_icons: 
+  mockito: 
+  test: 
 
 flutter:
   uses-material-design: true
 
   assets:
     - lib/ui/assets/
-
 
 flutter_icons:
   ios: true
@@ -37,16 +37,11 @@ flutter_icons:
   image_path_android: lib/ui/assets/icon/android.png
   adaptive_icon_background: lib/ui/assets/icon/background.png
   adaptive_icon_foreground: lib/ui/assets/icon/foreground.png
-
-
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
