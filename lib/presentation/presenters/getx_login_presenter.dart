@@ -12,6 +12,7 @@ import '../protocols/protocols.dart';
 class GetxLoginPresenter extends GetxController implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
+  final SaveCurrentAccount saveCurrentAccount;
 
   String _email;
   String _password;
@@ -25,6 +26,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   GetxLoginPresenter({
     @required this.validation,
     @required this.authentication,
+    @required this.saveCurrentAccount,
   });
 
   Stream<String> get emailErrorStream => _emailError.stream;
@@ -41,8 +43,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value =
-        validation.validate(field: 'password', value: password);
+    _passwordError.value = validation.validate(field: 'password', value: password);
     _validateForm();
   }
 
@@ -56,8 +57,8 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Future<void> auth() async {
     _isLoading.value = true;
     try {
-      await authentication
-          .auth(AuthenticationParams(email: _email, secret: _password));
+      final account = await authentication.auth(AuthenticationParams(email: _email, secret: _password));
+      saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       _loginError.refresh();
       _loginError.value = error.description;
