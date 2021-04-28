@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 abstract class LoginPresenter {
   Stream<bool> get isFormValidStream;
   Stream<String> get emailErrorStream;

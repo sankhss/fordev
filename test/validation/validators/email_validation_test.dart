@@ -23,6 +23,6 @@ void main() {
   });
 
   test('Should return error if email is invalid', () {
-    expect(sut.validate('invalid'), 'This is not a valid email.');
+    expect(sut.validate('invalid'), 'Please enter a valid email');
   });
 }
