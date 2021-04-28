@@ -155,8 +155,7 @@ main() {
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
 
-    sut.loginErrorStream.listen(expectAsync1(
-        (error) => expect(error, DomainError.invalidCredentials.description)));
+    expectLater(sut.loginErrorStream, emitsInOrder([null, DomainError.invalidCredentials.description]));
 
     await sut.auth();
   });
@@ -167,9 +166,8 @@ main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    
-    sut.loginErrorStream.listen(expectAsync1(
-        (error) => expect(error, DomainError.unexpected.description)));
+
+    expectLater(sut.loginErrorStream, emitsInOrder([null, DomainError.unexpected.description]));
 
     await sut.auth();
   });
