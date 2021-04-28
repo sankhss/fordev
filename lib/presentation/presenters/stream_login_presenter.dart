@@ -16,12 +16,10 @@ class LoginState {
   String emailError;
   String passwordError;
   String loginError;
+  String navigateTo;
 
   bool get isFormValid =>
-      emailError == null &&
-      passwordError == null &&
-      email != null &&
-      password != null;
+      emailError == null && passwordError == null && email != null && password != null;
 }
 
 class StreamLoginPresenter implements LoginPresenter {
@@ -31,8 +29,7 @@ class StreamLoginPresenter implements LoginPresenter {
   final _controller = StreamController<LoginState>.broadcast();
   var _state = LoginState();
 
-  StreamLoginPresenter(
-      {@required this.validation, @required this.authentication});
+  StreamLoginPresenter({@required this.validation, @required this.authentication});
 
   Stream<String> get emailErrorStream =>
       _controller.stream.map((state) => state.emailError).distinct();
@@ -40,10 +37,11 @@ class StreamLoginPresenter implements LoginPresenter {
       _controller.stream.map((state) => state.passwordError).distinct();
   Stream<bool> get isFormValidStream =>
       _controller.stream.map((state) => state.isFormValid).distinct();
-  Stream<bool> get isLoadingStream =>
-      _controller.stream.map((state) => state.isLoading).distinct();
+  Stream<bool> get isLoadingStream => _controller.stream.map((state) => state.isLoading).distinct();
   Stream<String> get loginErrorStream =>
       _controller.stream.map((state) => state.loginError).distinct();
+  Stream<String> get navigateToStream =>
+      _controller.stream.map((state) => state.navigateTo).distinct();
 
   void _update() {
     if (!_controller.isClosed) {
@@ -59,8 +57,7 @@ class StreamLoginPresenter implements LoginPresenter {
 
   void validatePassword(String password) {
     _state.password = password;
-    _state.passwordError =
-        validation.validate(field: 'password', value: password);
+    _state.passwordError = validation.validate(field: 'password', value: password);
     _update();
   }
 
@@ -68,8 +65,7 @@ class StreamLoginPresenter implements LoginPresenter {
     _state.isLoading = true;
     _update();
     try {
-      await authentication.auth(
-          AuthenticationParams(email: _state.email, secret: _state.password));
+      await authentication.auth(AuthenticationParams(email: _state.email, secret: _state.password));
     } on DomainError catch (error) {
       _state.loginError = error.description;
     }
