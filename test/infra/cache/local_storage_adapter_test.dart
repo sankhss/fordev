@@ -1,20 +1,9 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fordev/data/cache/cache.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class LocalStorageAdapter implements SaveSecureCacheStorage {
-  final FlutterSecureStorage secureStorage;
-
-  LocalStorageAdapter({this.secureStorage});
-
-  @override
-  Future<void> saveSecure({String key, String value}) async {
-    await secureStorage.write(key: key, value: value);
-  }
-
-}
+import 'package:fordev/infra/cache/cache.dart';
 
 class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
@@ -37,9 +26,9 @@ void main() {
     verify(secureStorage.write(key: key, value: value));
   });
 
-  test('Should throw if save secure throws error', () async {
+  test('Should throw save secure errors', () async {
     when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
-    
+
     final future = sut.saveSecure(key: key, value: value);
 
     expect(future, throwsA(TypeMatcher<Exception>()));
