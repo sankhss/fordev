@@ -43,5 +43,13 @@ void main() {
 
       verify(secureStorage.read(key: key));
     });
+
+    test('Should return value from fetch secure', () async {
+      when(secureStorage.read(key: anyNamed('key'))).thenAnswer((_) => Future.value(value));
+      final token = await sut.fetchSecure(key);
+
+      expect(token, value);
+    });
+
   });
 }
