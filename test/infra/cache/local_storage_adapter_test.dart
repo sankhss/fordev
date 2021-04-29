@@ -8,10 +8,10 @@ import 'package:fordev/infra/cache/cache.dart';
 class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
 void main() {
-    LocalStorageAdapter sut;
-    FlutterSecureStorage secureStorage;
-    String key;
-    String value;
+  LocalStorageAdapter sut;
+  FlutterSecureStorage secureStorage;
+  String key;
+  String value;
 
   setUp(() {
     secureStorage = FlutterSecureStorageSpy();
@@ -20,17 +20,28 @@ void main() {
     value = faker.guid.guid();
   });
 
-  test('Should call save secure with correct values', () async {
-    await sut.saveSecure(key: key, value: value);
+  group('save secure', () {
+    test('Should call save secure with correct values', () async {
+      await sut.saveSecure(key: key, value: value);
 
-    verify(secureStorage.write(key: key, value: value));
+      verify(secureStorage.write(key: key, value: value));
+    });
+
+    test('Should throw save secure errors', () async {
+      when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+          .thenThrow(Exception());
+
+      final future = sut.saveSecure(key: key, value: value);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+    });
   });
 
-  test('Should throw save secure errors', () async {
-    when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+  group('fetch secure', () {
+    test('Should call fetch secure with correct value', () async {
+      await sut.fetchSecure(key);
 
-    final future = sut.saveSecure(key: key, value: value);
-
-    expect(future, throwsA(TypeMatcher<Exception>()));
+      verify(secureStorage.read(key: key));
+    });
   });
 }
