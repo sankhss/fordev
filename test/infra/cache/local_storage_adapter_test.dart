@@ -51,5 +51,13 @@ void main() {
       expect(token, value);
     });
 
+    test('Should throw fetch secure errors', () async {
+      when(secureStorage.read(key: anyNamed('key')))
+          .thenThrow(Exception());
+
+      final future = sut.fetchSecure(key);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+    });
   });
 }
