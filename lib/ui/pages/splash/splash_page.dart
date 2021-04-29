@@ -10,7 +10,7 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
+    presenter.loadCurrent();
     return Scaffold(
       body: Builder(
         builder: (context) {
