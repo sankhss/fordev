@@ -78,4 +78,13 @@ void main() {
     verify(presenter.loadCurrentAccount()).called(1);
   });
 
+  testWidgets('Sould change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/fake');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/fake');
+    expect(find.text('fake_page'), findsOneWidget);
+  });
 }
