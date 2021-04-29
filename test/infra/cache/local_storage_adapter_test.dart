@@ -38,6 +38,8 @@ void main() {
   });
 
   group('fetch secure', () {
+    PostExpectation mockFetchSecureCall() => when(secureStorage.read(key: anyNamed('key')));
+
     test('Should call fetch secure with correct value', () async {
       await sut.fetchSecure(key);
 
@@ -45,15 +47,14 @@ void main() {
     });
 
     test('Should return value from fetch secure', () async {
-      when(secureStorage.read(key: anyNamed('key'))).thenAnswer((_) => Future.value(value));
+      mockFetchSecureCall().thenAnswer((_) => Future.value(value));
       final token = await sut.fetchSecure(key);
 
       expect(token, value);
     });
 
     test('Should throw fetch secure errors', () async {
-      when(secureStorage.read(key: anyNamed('key')))
-          .thenThrow(Exception());
+      mockFetchSecureCall().thenThrow(Exception());
 
       final future = sut.fetchSecure(key);
 
