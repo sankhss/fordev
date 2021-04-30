@@ -1,8 +1,11 @@
+import 'package:test/test.dart';
+import 'package:mockito/mockito.dart';
+
+import 'package:meta/meta.dart';
+import 'package:get/get.dart';
+
 import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/ui/pages/pages.dart';
-import 'package:get/get.dart';
-import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
 
 class GetxSplashPresenter implements SplashPresenter {
   final LoadCurrentAccount loadCurrentAccount;
@@ -11,11 +14,12 @@ class GetxSplashPresenter implements SplashPresenter {
 
   Stream<String> get navigateToStream => _navigateTo.stream;
 
-  GetxSplashPresenter({this.loadCurrentAccount});
+  GetxSplashPresenter({@required this.loadCurrentAccount});
 
   @override
   Future<void> loadCurrent() async {
     await loadCurrentAccount.load();
+    _navigateTo.value = '/surveys';
   }
 
 }
@@ -35,5 +39,11 @@ void main() {
     await sut.loadCurrent();
 
     verify(loadCurrentAccount.load()).called(1);
+  });
+
+  test('Should go to surveys page on success', () async {
+    sut.navigateToStream.listen(expectAsync1((page) => expect(page, '/surveys')));
+
+    await sut.loadCurrent();
   });
 }
