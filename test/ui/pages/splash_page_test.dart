@@ -28,7 +28,7 @@ void main() {
       GetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => SplashPage(presenter: presenter)),
+          GetPage(name: '/', page: () => SplashPage(presenter)),
           GetPage(name: '/fake', page: () => Scaffold(body: Text('fake_page'))),
         ],
       ),
