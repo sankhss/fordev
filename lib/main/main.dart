@@ -30,10 +30,15 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: '4Dev',
         theme: createAppTheme(),
-        initialRoute: '/login',
+        initialRoute: '/',
         getPages: [
-          GetPage(name: '/login', page: createLoginPage),
-          GetPage(name: '/surveys', page: () => Scaffold(body: Text('Surveys'))),
+          GetPage(name: '/', page: createSplashPage, transition: Transition.fade),
+          GetPage(name: '/login', page: createLoginPage, transition: Transition.fadeIn),
+          GetPage(
+            name: '/surveys',
+            page: () => Scaffold(body: Text('Surveys')),
+            transition: Transition.fadeIn,
+          ),
         ],
       ),
     );

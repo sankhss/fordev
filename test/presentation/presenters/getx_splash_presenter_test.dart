@@ -27,7 +27,7 @@ void main() {
   });
 
   test('Should call LoadCurrentAccount', () async {
-    await sut.loadCurrent();
+    await sut.loadCurrent(durationInSeconds: 0);
 
     verify(loadCurrentAccount.load()).called(1);
   });
@@ -42,13 +42,13 @@ void main() {
     mockLoadCurrentAccount(account: null);
     sut.navigateToStream.listen(expectAsync1((page) => expect(page, '/login')));
 
-    await sut.loadCurrent();
+    await sut.loadCurrent(durationInSeconds: 0);
   });
 
   test('Should go to login page on exception', () async {
     mockLoadCurrentAccountError();
     sut.navigateToStream.listen(expectAsync1((page) => expect(page, '/login')));
 
-    await sut.loadCurrent();
+    await sut.loadCurrent(durationInSeconds: 0);
   });
 }

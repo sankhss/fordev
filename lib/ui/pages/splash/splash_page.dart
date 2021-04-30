@@ -11,19 +11,32 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     presenter.loadCurrent();
-    return Scaffold(
-      body: Builder(
-        builder: (context) {
-          presenter.navigateToStream.listen((page) {
-            if (page != null && page.isNotEmpty) {
-              Get.offAllNamed(page);
-            }
-          });
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Theme.of(context).primaryColor,
+            Theme.of(context).primaryColorLight,
+          ],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Builder(
+          builder: (context) {
+            presenter.navigateToStream.listen((page) {
+              if (page != null && page.isNotEmpty) {
+                Get.offAllNamed(page);
+              }
+            });
 
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
       ),
     );
   }
