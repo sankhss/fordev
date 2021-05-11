@@ -223,4 +223,18 @@ main() {
     enterButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(enterButton.enabled, false);
   });
+
+  testWidgets('Should call signUp on form submit', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final finder = find.byType(ElevatedButton);
+    await tester.ensureVisible(finder);
+    await tester.tap(finder);
+    await tester.pump();
+
+    verify(presenter.signUp()).called(1);
+  });
 }
