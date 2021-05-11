@@ -104,5 +104,12 @@ main() {
     verify(presenter.validatePasswordConfirmation(password));
   });
 
-  
+  testWidgets('Should present error if name is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    nameErrorController.add(UIError.invalidName);
+    await tester.pump();
+
+    expect(find.text(UIError.invalidName.description), findsOneWidget);
+  });
 }
