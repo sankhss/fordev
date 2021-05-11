@@ -169,4 +169,26 @@ main() {
         findsOneWidget,
         reason: 'only one text child means it has no errors');
   });
+
+  testWidgets('Should present correct error for password confirmation validation', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordConfirmationErrorController.add(UIError.passwordsDontMatch);
+    await tester.pump();
+    expect(find.text(UIError.passwordsDontMatch.description), findsOneWidget);
+
+    passwordConfirmationErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    passwordConfirmationErrorController.add(null);
+    await tester.pump();
+    expect(
+        find.descendant(
+          of: find.bySemanticsLabel(R.strings.confirmPassword),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'only one text child means it has no errors');
+  });
 }
