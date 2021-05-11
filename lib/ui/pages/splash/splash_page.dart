@@ -10,6 +10,7 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Navigator.of(context).canPop();
     presenter.loadCurrent();
     return Container(
       decoration: BoxDecoration(
