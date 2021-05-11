@@ -125,4 +125,26 @@ main() {
         findsOneWidget,
         reason: 'only one text child means it has no errors');
   });
+
+  testWidgets('Should present correct error for email validation', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.invalidEmail);
+    await tester.pump();
+    expect(find.text(UIError.invalidEmail.description), findsOneWidget);
+
+    emailErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    emailErrorController.add(null);
+    await tester.pump();
+    expect(
+        find.descendant(
+          of: find.bySemanticsLabel(R.strings.email),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'only one text child means it has no errors');
+  });
 }
