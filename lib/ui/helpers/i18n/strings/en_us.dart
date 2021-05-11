@@ -9,6 +9,7 @@ class EnUs implements Translations {
   String get name => 'Name';
   String get password => 'Password';
 
+  String get alreadyExists => 'An account already exists for this email.';
   String get invalidCredentials => 'Invalid credentials.';
   String get invalidEmail => 'Please enter a valid email';
   String get invalidName => 'Please enter a valid name';

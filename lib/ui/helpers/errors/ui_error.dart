@@ -3,6 +3,7 @@ import '../helpers.dart';
 enum UIError {
   unexpected,
   invalidCredentials,
+  alreadyExists,
   requiredField,
   invalidEmail,
   invalidName,
@@ -15,6 +16,8 @@ extension UIErrorProperties on UIError {
     switch (this) {
       case UIError.invalidCredentials:
         return R.strings.invalidCredentials;
+      case UIError.alreadyExists:
+        return R.strings.alreadyExists;
       case UIError.requiredField:
         return R.strings.required;
       case UIError.invalidEmail:

@@ -22,7 +22,13 @@ class SignUpPage extends StatelessWidget {
             hideLoadingSpinner(context);
           }
         });
-        
+
+        presenter.signUpErrorStream.listen((error) {
+          if (error != null) {
+            showErrorSnackBar(context, message: error.description);
+          }
+        });
+
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

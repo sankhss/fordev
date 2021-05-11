@@ -7,6 +7,7 @@ abstract class Translations {
   String get name;
   String get password;
 
+  String get alreadyExists;
   String get invalidCredentials;
   String get invalidEmail;
   String get invalidName;

@@ -9,6 +9,7 @@ class PtBr implements Translations {
   String get name => 'Nome';
   String get password => 'Senha';
 
+  String get alreadyExists => 'Já existe uma conta para este e-mail.';
   String get invalidCredentials => 'Credenciais inválidas.';
   String get invalidEmail => 'Este não é um e-mail válido';
   String get invalidName => 'Este nome não é válido';
