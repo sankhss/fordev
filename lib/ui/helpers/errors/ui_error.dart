@@ -1,3 +1,5 @@
+import '../helpers.dart';
+
 enum UIError {
   unexpected,
   invalidCredentials,
@@ -8,10 +10,14 @@ enum UIError {
 extension UIErrorProperties on UIError {
   String get description {
     switch (this) {
-      case UIError.invalidCredentials: return 'Invalid credentials.';
-      case UIError.requiredField: return 'Required';
-      case UIError.invalidEmail: return 'Please enter a valid email';
-      default: return 'Unexpected error. Try again later.';
+      case UIError.invalidCredentials:
+        return R.strings.invalidCredentials;
+      case UIError.requiredField:
+        return R.strings.required;
+      case UIError.invalidEmail:
+        return R.strings.invalidEmail;
+      default:
+        return R.strings.unexpected;
     }
   }
 }
