@@ -15,6 +15,14 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (context) {
+        presenter.isLoadingStream.listen((isLoading) {
+          if (isLoading) {
+            showLoadingSpinner(context);
+          } else {
+            hideLoadingSpinner(context);
+          }
+        });
+        
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
