@@ -1,27 +1,62 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:mockito/mockito.dart';
 import 'package:get/get.dart';
 
+import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:fordev/ui/pages/pages.dart';
 
-class LoginPresenterSpy extends Mock implements LoginPresenter {}
+class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 main() {
+  SignUpPresenter presenter;
+  StreamController nameErrorController;
+  StreamController emailErrorController;
+  StreamController passwordErrorController;
+  StreamController passwordConfirmationErrorController;
+
+  void mockStreams() {
+    nameErrorController = StreamController<UIError>();
+    when(presenter.nameErrorStream).thenAnswer((_) => nameErrorController.stream);
+
+    emailErrorController = StreamController<UIError>();
+    when(presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
+
+    passwordErrorController = StreamController<UIError>();
+    when(presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
+
+    passwordConfirmationErrorController = StreamController<UIError>();
+    when(presenter.passwordConfirmationErrorStream)
+        .thenAnswer((_) => passwordConfirmationErrorController.stream);
+  }
+
+  void closeStreams() {
+    nameErrorController.close();
+    emailErrorController.close();
+    passwordErrorController.close();
+    passwordConfirmationErrorController.close();
+  }
 
   Future<void> loadPage(WidgetTester tester) async {
+    presenter = SignUpPresenterSpy();
+
+    mockStreams();
 
     final signUpPage = GetMaterialApp(
       initialRoute: '/signup',
       getPages: [
-        GetPage(name: '/signup', page: () => SignUpPage()),
+        GetPage(name: '/signup', page: () => SignUpPage(presenter)),
       ],
     );
     await tester.pumpWidget(signUpPage);
   }
+
+  tearDown(() {
+    closeStreams();
+  });
 
   testWidgets('Should load with correct initial state', (WidgetTester tester) async {
     await loadPage(tester);
@@ -39,8 +74,8 @@ main() {
     expect(passwordTextChildren, findsOneWidget,
         reason: 'only one text child means it has no errors');
 
-    final confirmPasswordTextChildren =
-        find.descendant(of: find.bySemanticsLabel(R.strings.confirmPassword), matching: find.byType(Text));
+    final confirmPasswordTextChildren = find.descendant(
+        of: find.bySemanticsLabel(R.strings.confirmPassword), matching: find.byType(Text));
     expect(confirmPasswordTextChildren, findsOneWidget,
         reason: 'only one text child means it has no errors');
 
@@ -49,4 +84,25 @@ main() {
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
+
+  testWidgets('Should call validate with correct values', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final name = faker.person.name();
+    await tester.enterText(find.bySemanticsLabel(R.strings.name), name);
+    verify(presenter.validateName(name));
+
+    final email = faker.internet.email();
+    await tester.enterText(find.bySemanticsLabel(R.strings.email), email);
+    verify(presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+    await tester.enterText(find.bySemanticsLabel(R.strings.password), password);
+    verify(presenter.validatePassword(password));
+
+    await tester.enterText(find.bySemanticsLabel(R.strings.confirmPassword), password);
+    verify(presenter.validatePasswordConfirmation(password));
+  });
+
+  
 }

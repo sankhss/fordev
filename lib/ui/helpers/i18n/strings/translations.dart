@@ -9,6 +9,9 @@ abstract class Translations {
 
   String get invalidCredentials;
   String get invalidEmail;
+  String get invalidName;
+  String get invalidPassword;
+  String get passwordsDontMatch;
   String get required;
   String get unexpected;
 }
