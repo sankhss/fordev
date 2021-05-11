@@ -1,7 +1,8 @@
 import 'strings.dart';
 
 class EnUs implements Translations {
-
+  @override
+  String get confirmPassword => 'Confirm password';
   @override
   String get createAccount => 'Create account';
   @override
@@ -10,6 +11,8 @@ class EnUs implements Translations {
   String get enter => 'Enter';
   @override
   String get login => 'Login';
+  @override
+  String get name => 'Name';
   @override
   String get password => 'Password';
 

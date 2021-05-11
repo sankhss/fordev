@@ -2,6 +2,8 @@ import 'strings.dart';
 
 class PtBr implements Translations {
   @override
+  String get confirmPassword => 'Confirmar senha';
+  @override
   String get createAccount => 'Criar conta';
   @override
   String get email => 'E-mail';
@@ -9,6 +11,8 @@ class PtBr implements Translations {
   String get enter => 'Entrar';
   @override
   String get login => 'Login';
+  @override
+  String get name => 'Nome';
   @override
   String get password => 'Senha';
 
