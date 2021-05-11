@@ -36,6 +36,7 @@ void main() {
       password: password,
       passwordConfirmation: password,
     );
+    mockHttpData(mockValidData());
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -88,5 +89,13 @@ void main() {
     final response = await sut.create(params);
 
     expect(response.token, data['accessToken']);
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
+    mockHttpData(mockInvalidData());
+
+    final response = sut.create(params);
+
+    expect(response, throwsA(DomainError.unexpected));
   });
 }
