@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
 
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import '../ui/components/components.dart';
 import 'factories/factories.dart';
 
 void main() {
+  //R.load(Locale('pt', 'BR'));
   Provider.debugCheckInvalidValueType = null;
 
   runApp(App());
@@ -30,7 +32,7 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: '4Dev',
         theme: createAppTheme(),
-        initialRoute: '/',
+        initialRoute: '/login',
         getPages: [
           GetPage(name: '/', page: createSplashPage, transition: Transition.fade),
           GetPage(name: '/login', page: createLoginPage, transition: Transition.fadeIn),
