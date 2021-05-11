@@ -104,12 +104,25 @@ main() {
     verify(presenter.validatePasswordConfirmation(password));
   });
 
-  testWidgets('Should present error if name is invalid', (WidgetTester tester) async {
+  testWidgets('Should present correct error for name validation', (WidgetTester tester) async {
     await loadPage(tester);
 
     nameErrorController.add(UIError.invalidName);
     await tester.pump();
-
     expect(find.text(UIError.invalidName.description), findsOneWidget);
+
+    nameErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    nameErrorController.add(null);
+    await tester.pump();
+    expect(
+        find.descendant(
+          of: find.bySemanticsLabel(R.strings.name),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'only one text child means it has no errors');
   });
 }
