@@ -20,11 +20,9 @@ class RemoteCreateAccount implements CreateAccount {
         method: 'post',
         body: RemoteCreateAccountParams.fromDomain(params).toJson(),
       );
-      return null;
+      return RemoteAccount.fromJson(response).toEntity();
     } on HttpError catch (error) {
-      throw error == HttpError.forbidden
-          ? DomainError.alreadyExists
-          : DomainError.unexpected;
+      throw error == HttpError.forbidden ? DomainError.alreadyExists : DomainError.unexpected;
     }
   }
 }

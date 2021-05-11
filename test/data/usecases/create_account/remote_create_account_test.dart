@@ -16,9 +16,13 @@ void main() {
   String url;
   CreateAccountParams params;
 
+  Map mockValidData() => {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+  Map mockInvalidData() => {'invalid_key': 'null'};
+
   PostExpectation mockRequest() => when(
       httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
 
+  void mockHttpData(Map data) => mockRequest().thenAnswer((_) async => data);
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
   setUp(() {
@@ -75,5 +79,14 @@ void main() {
     final response = sut.create(params);
 
     expect(response, throwsA(DomainError.alreadyExists));
+  });
+  
+  test('Should return an Account if HttpClient returns 200', () async {
+    final data = mockValidData();
+    mockHttpData(data);
+
+    final response = await sut.create(params);
+
+    expect(response.token, data['accessToken']);
   });
 }
