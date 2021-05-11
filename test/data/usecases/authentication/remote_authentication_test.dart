@@ -16,14 +16,11 @@ void main() {
   String url;
   AuthenticationParams params;
 
-  Map mockValidData() =>
-      {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+  Map mockValidData() => {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
   Map mockInvalidData() => {'invalid_key': 'null'};
 
-  PostExpectation mockRequest() => when(httpClient.request(
-      url: anyNamed('url'),
-      method: anyNamed('method'),
-      body: anyNamed('body')));
+  PostExpectation mockRequest() => when(
+      httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
 
   void mockHttpData(Map data) => mockRequest().thenAnswer((_) async => data);
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
@@ -32,17 +29,14 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
-    params = AuthenticationParams(
-        email: faker.internet.email(), secret: faker.internet.password());
+    params = AuthenticationParams(email: faker.internet.email(), secret: faker.internet.password());
     mockHttpData(mockValidData());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.auth(params);
 
     verify(httpClient.request(
-        url: url,
-        method: 'post',
-        body: {'email': params.email, 'password': params.secret}));
+        url: url, method: 'post', body: {'email': params.email, 'password': params.secret}));
   });
 
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
@@ -69,8 +63,7 @@ void main() {
     expect(response, throwsA(DomainError.unexpected));
   });
 
-  test('Should throw InvalidCredentialsError if HttpClient returns 401',
-      () async {
+  test('Should throw InvalidCredentialsError if HttpClient returns 401', () async {
     mockHttpError(HttpError.unauthorized);
 
     final response = sut.auth(params);
@@ -81,15 +74,13 @@ void main() {
   test('Should return an Account if HttpClient returns 200', () async {
     final data = mockValidData();
     mockHttpData(data);
-    
+
     final response = await sut.auth(params);
 
     expect(response.token, data['accessToken']);
   });
 
-  test(
-      'Should throw UnexpectedError if HttpClient returns 200 with invalid data',
-      () async {
+  test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
     mockHttpData(mockInvalidData());
 
     final response = sut.auth(params);

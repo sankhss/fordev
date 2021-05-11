@@ -22,8 +22,8 @@ class RemoteCreateAccount implements CreateAccount {
       );
       return null;
     } on HttpError catch (error) {
-      throw error == HttpError.unauthorized
-          ? DomainError.invalidCredentials
+      throw error == HttpError.forbidden
+          ? DomainError.alreadyExists
           : DomainError.unexpected;
     }
   }

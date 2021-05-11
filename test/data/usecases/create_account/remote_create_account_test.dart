@@ -16,10 +16,8 @@ void main() {
   String url;
   CreateAccountParams params;
 
-  PostExpectation mockRequest() => when(httpClient.request(
-      url: anyNamed('url'),
-      method: anyNamed('method'),
-      body: anyNamed('body')));
+  PostExpectation mockRequest() => when(
+      httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
 
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
@@ -69,5 +67,13 @@ void main() {
     final response = sut.create(params);
 
     expect(response, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw AlreadyExistsError if HttpClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final response = sut.create(params);
+
+    expect(response, throwsA(DomainError.alreadyExists));
   });
 }
