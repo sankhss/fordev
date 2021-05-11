@@ -1,11 +1,11 @@
-import 'package:flutter/foundation.dart';
+import '../../helpers/helpers.dart';
 
 abstract class LoginPresenter {
   Stream<bool> get isFormValidStream;
-  Stream<String> get emailErrorStream;
-  Stream<String> get passwordErrorStream;
+  Stream<UIError> get emailErrorStream;
+  Stream<UIError> get passwordErrorStream;
   Stream<bool> get isLoadingStream;
-  Stream<String> get loginErrorStream;
+  Stream<UIError> get loginErrorStream;
   Stream<String> get navigateToStream;
 
   void validateEmail(String email);

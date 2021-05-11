@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../utils/i18n/i18n.dart';
 import '../../components/components.dart';
+import '../../helpers/helpers.dart';
 import 'components/components.dart';
 import 'login.dart';
 
@@ -25,8 +26,8 @@ class LoginPage extends StatelessWidget {
         });
 
         presenter.loginErrorStream.listen((error) {
-          if (error != null && error.isNotEmpty) {
-            showErrorSnackBar(context, message: error);
+          if (error != null) {
+            showErrorSnackBar(context, message: error.description);
           }
         });
 

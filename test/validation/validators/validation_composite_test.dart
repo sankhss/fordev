@@ -1,3 +1,4 @@
+import 'package:fordev/presentation/protocols/protocols.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -18,15 +19,15 @@ void main() {
     return when(validation.validate(any));
   }
 
-  void mockValidation1({String error}) {
+  void mockValidation1({ValidationError error}) {
     mockValidation(validation1).thenReturn(error);
   }
 
-  void mockValidation2({String error}) {
+  void mockValidation2({ValidationError error}) {
     mockValidation(validation2, field: 'other').thenReturn(error);
   }
 
-  void mockValidation3({String error}) {
+  void mockValidation3({ValidationError error}) {
     mockValidation(validation3).thenReturn(error);
   }
 
@@ -42,16 +43,14 @@ void main() {
   });
 
   test('Should return null if all validations return null or empty', () {
-    mockValidation2(error: '');
-
     expect(sut.validate(field: 'any', value: 'any'), null);
   });
 
   test('Should return the first error', () {
-    mockValidation1(error: 'error1');
-    mockValidation2(error: 'error2');
-    mockValidation3(error: 'error3');
+    mockValidation1(error: ValidationError.invalidEmail);
+    mockValidation2(error: ValidationError.requiredField);
+    mockValidation3(error: ValidationError.invalidEmail);
 
-    expect(sut.validate(field: 'other', value: 'any'), 'error2');
+    expect(sut.validate(field: 'other', value: 'any'), ValidationError.requiredField);
   });
 }
