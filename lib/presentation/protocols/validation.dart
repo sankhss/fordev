@@ -7,4 +7,7 @@ abstract class Validation {
 enum ValidationError {
   requiredField,
   invalidEmail,
+  invalidPassword,
+  invalidName,
+  dontMatch,
 }
