@@ -12,6 +12,7 @@ class ValidationSpy extends Mock implements Validation {}
 main() {
   GetxSignUpPresenter sut;
   Validation validation;
+  String name;
   String email;
 
   PostExpectation mockValidationCall(String field) =>
@@ -25,44 +26,83 @@ main() {
     sut = GetxSignUpPresenter(
       validation: validation,
     );
+    name = faker.person.name();
     email = faker.internet.email();
 
     mockValidation();
   });
 
   group('validation', () {
-    test('Should call email Validation', () {
-      sut.validateEmail(email);
+    group('name', () {
+      test('Should call name validation', () {
+        sut.validateName(name);
 
-      verify(validation.validate(field: 'email', value: email)).called(1);
+        verify(validation.validate(field: 'name', value: name)).called(1);
+      });
+
+      test('Should emit error if name is invalid', () {
+        mockValidation(result: ValidationError.invalidName);
+
+        sut.nameErrorStream.listen(expectAsync1((error) => expect(error, UIError.invalidName)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validateName(name);
+        sut.validateName(name);
+      });
+
+      test('Should emit error if name is empty', () {
+        mockValidation(result: ValidationError.requiredField);
+
+        sut.nameErrorStream.listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validateName(name);
+        sut.validateName(name);
+      });
+
+      test('Should emit null if name validation succeed', () {
+        sut.nameErrorStream.listen(expectAsync1((error) => expect(error, null)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validateName(name);
+        sut.validateName(name);
+      });
     });
 
-    test('Should emit error if email is invalid', () {
-      mockValidation(result: ValidationError.invalidEmail);
+    group('email', () {
+      test('Should call email validation', () {
+        sut.validateEmail(email);
 
-      sut.emailErrorStream.listen(expectAsync1((error) => expect(error, UIError.invalidEmail)));
-      sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+        verify(validation.validate(field: 'email', value: email)).called(1);
+      });
 
-      sut.validateEmail(email);
-      sut.validateEmail(email);
-    });
+      test('Should emit error if email is invalid', () {
+        mockValidation(result: ValidationError.invalidEmail);
 
-    test('Should emit error if email is empty', () {
-      mockValidation(result: ValidationError.requiredField);
+        sut.emailErrorStream.listen(expectAsync1((error) => expect(error, UIError.invalidEmail)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
-      sut.emailErrorStream.listen(expectAsync1((error) => expect(error, UIError.requiredField)));
-      sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+        sut.validateEmail(email);
+        sut.validateEmail(email);
+      });
 
-      sut.validateEmail(email);
-      sut.validateEmail(email);
-    });
+      test('Should emit error if email is empty', () {
+        mockValidation(result: ValidationError.requiredField);
 
-    test('Should emit null if email validation succeed', () {
-      sut.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
-      sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+        sut.emailErrorStream.listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
-      sut.validateEmail(email);
-      sut.validateEmail(email);
+        sut.validateEmail(email);
+        sut.validateEmail(email);
+      });
+
+      test('Should emit null if email validation succeed', () {
+        sut.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validateEmail(email);
+        sut.validateEmail(email);
+      });
     });
   });
 }

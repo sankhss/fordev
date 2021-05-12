@@ -66,7 +66,7 @@ main() {
   });
 
   group('validation', () {
-    test('Should call email Validation', () {
+    test('Should call email validation', () {
       sut.validateEmail(email);
 
       verify(validation.validate(field: 'email', value: email)).called(1);
@@ -100,7 +100,7 @@ main() {
       sut.validateEmail(email);
     });
 
-    test('Should call password Validation', () {
+    test('Should call password validation', () {
       sut.validatePassword(password);
 
       verify(validation.validate(field: 'password', value: password)).called(1);
