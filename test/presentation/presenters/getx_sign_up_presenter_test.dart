@@ -117,7 +117,8 @@ main() {
       test('Should emit error if password is invalid', () {
         mockValidation(result: ValidationError.invalidPassword);
 
-        sut.passwordErrorStream.listen(expectAsync1((error) => expect(error, UIError.invalidPassword)));
+        sut.passwordErrorStream
+            .listen(expectAsync1((error) => expect(error, UIError.invalidPassword)));
         sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
         sut.validatePassword(password);
@@ -127,7 +128,8 @@ main() {
       test('Should emit error if password is empty', () {
         mockValidation(result: ValidationError.requiredField);
 
-        sut.passwordErrorStream.listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+        sut.passwordErrorStream
+            .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
         sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
         sut.validatePassword(password);
@@ -140,6 +142,43 @@ main() {
 
         sut.validatePassword(password);
         sut.validatePassword(password);
+      });
+    });
+    group('password confirmation', () {
+      test('Should call validation for password confirmation', () {
+        sut.validatePasswordConfirmation(password);
+
+        verify(validation.validate(field: 'passwordConfirmation', value: password)).called(1);
+      });
+
+      test('Should emit error if password confirmation is invalid', () {
+        mockValidation(result: ValidationError.dontMatch);
+
+        sut.passwordConfirmationErrorStream
+            .listen(expectAsync1((error) => expect(error, UIError.passwordsDontMatch)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validatePasswordConfirmation(password);
+        sut.validatePasswordConfirmation(password);
+      });
+
+      test('Should emit error if password confirmation is empty', () {
+        mockValidation(result: ValidationError.requiredField);
+
+        sut.passwordConfirmationErrorStream
+            .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validatePasswordConfirmation(password);
+        sut.validatePasswordConfirmation(password);
+      });
+
+      test('Should emit null if password confirmaton succeed', () {
+        sut.passwordConfirmationErrorStream.listen(expectAsync1((error) => expect(error, null)));
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validatePasswordConfirmation(password);
+        sut.validatePasswordConfirmation(password);
       });
     });
   });
