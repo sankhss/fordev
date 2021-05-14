@@ -9,6 +9,7 @@ import '../protocols/protocols.dart';
 
 class GetxSignUpPresenter extends GetxController {
   final CreateAccount createAccount;
+  final SaveCurrentAccount saveCurrentAccount;
   final Validation validation;
 
   var _nameError = Rx<UIError>(null);
@@ -26,6 +27,7 @@ class GetxSignUpPresenter extends GetxController {
 
   GetxSignUpPresenter({
     @required this.createAccount,
+    @required this.saveCurrentAccount,
     @required this.validation,
   });
 
@@ -40,13 +42,14 @@ class GetxSignUpPresenter extends GetxController {
   Future<void> signUp() async {
     _isLoading.value = true;
     try {
-      await createAccount.create(
+      final account = await createAccount.create(
         CreateAccountParams(
             name: _name,
             email: _email,
             password: _password,
             passwordConfirmation: _passwordConfirmation),
       );
+      await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.alreadyExists:

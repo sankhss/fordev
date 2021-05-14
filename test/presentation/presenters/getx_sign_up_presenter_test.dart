@@ -14,9 +14,12 @@ class ValidationSpy extends Mock implements Validation {}
 
 class CreateAccountSpy extends Mock implements CreateAccount {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
 main() {
   GetxSignUpPresenter sut;
   CreateAccount createAccount;
+  SaveCurrentAccount saveCurrentAccount;
   Validation validation;
   String name;
   String email;
@@ -25,7 +28,6 @@ main() {
 
   PostExpectation mockValidationCall(String field) =>
       when(validation.validate(field: field ?? anyNamed('field'), value: anyNamed('value')));
-
   void mockValidation({String field, ValidationError result}) =>
       mockValidationCall(field).thenReturn(result);
 
@@ -36,15 +38,23 @@ main() {
     sut.validatePasswordConfirmation(password);
   }
 
-  PostExpectation mockCreateAccountCall() => when(createAccount.create(any));
 
+  PostExpectation mockCreateAccountCall() => when(createAccount.create(any));
+  void mockCreateAccountSuccess() => mockCreateAccountCall().thenAnswer((_) async => Account(token));
   void mockCreateAccountError(DomainError error) => mockCreateAccountCall().thenThrow(error);
+
+  PostExpectation mockSaveCurrentAccountCall() => when(saveCurrentAccount.save(any));
+  void mockSaveCurrentAccountError() =>
+      mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
+
 
   setUp(() {
     createAccount = CreateAccountSpy();
+    saveCurrentAccount = SaveCurrentAccountSpy();
     validation = ValidationSpy();
     sut = GetxSignUpPresenter(
       createAccount: createAccount,
+      saveCurrentAccount: saveCurrentAccount,
       validation: validation,
     );
     name = faker.person.name();
@@ -53,6 +63,7 @@ main() {
     token = faker.guid.guid();
 
     mockValidation();
+    mockCreateAccountSuccess();
   });
 
   group('validation', () {
@@ -258,6 +269,28 @@ main() {
 
     test('Should emit correct events on unexpected error', () async {
       mockCreateAccountError(DomainError.unexpected);
+      validateForm();
+
+      expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      expectLater(sut.signUpErrorStream, emits(UIError.unexpected));
+
+      await sut.signUp();
+    });
+  });
+
+  group('save current account', () {
+    test('Should call save current account with correct value', () async {
+      validateForm();
+
+      await sut.signUp();
+
+      verify(saveCurrentAccount.save(Account(token))).called(1);
+    });
+
+    test('Should emit unexpected error if save current account fails', () async {
+      mockSaveCurrentAccountError();
+
       validateForm();
 
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
