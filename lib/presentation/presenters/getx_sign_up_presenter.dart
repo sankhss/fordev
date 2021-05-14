@@ -53,6 +53,8 @@ class GetxSignUpPresenter extends GetxController {
           _signUpError.value = UIError.alreadyExists;
           break;
         default:
+          _signUpError.value = UIError.unexpected;
+          break;
       }
     } finally {
       _isLoading.value = false;

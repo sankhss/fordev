@@ -255,5 +255,16 @@ main() {
 
       await sut.signUp();
     });
+
+    test('Should emit correct events on unexpected error', () async {
+      mockCreateAccountError(DomainError.unexpected);
+      validateForm();
+
+      expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      expectLater(sut.signUpErrorStream, emits(UIError.unexpected));
+
+      await sut.signUp();
+    });
   });
 }
