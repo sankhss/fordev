@@ -1,3 +1,4 @@
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class GetxSignUpPresenter extends GetxController {
   var _emailError = Rx<UIError>(null);
   var _passwordError = Rx<UIError>(null);
   var _passwordConfirmationError = Rx<UIError>(null);
+  var _signUpError = Rx<UIError>(null);
   var _isFormValid = false.obs;
   var _isLoading = false.obs;
 
@@ -31,19 +33,30 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UIError> get emailErrorStream => _emailError.stream;
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
   Stream<UIError> get passwordConfirmationErrorStream => _passwordConfirmationError.stream;
+  Stream<UIError> get signUpErrorStream => _signUpError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
   Future<void> signUp() async {
     _isLoading.value = true;
-    await createAccount.create(
-      CreateAccountParams(
-          name: _name,
-          email: _email,
-          password: _password,
-          passwordConfirmation: _passwordConfirmation),
-    );
-    _isLoading.value = false;
+    try {
+      await createAccount.create(
+        CreateAccountParams(
+            name: _name,
+            email: _email,
+            password: _password,
+            passwordConfirmation: _passwordConfirmation),
+      );
+    } on DomainError catch (error) {
+      switch (error) {
+        case DomainError.alreadyExists:
+          _signUpError.value = UIError.alreadyExists;
+          break;
+        default:
+      }
+    } finally {
+      _isLoading.value = false;
+    }
   }
 
   void validateName(String name) {

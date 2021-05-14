@@ -1,4 +1,6 @@
 import 'package:faker/faker.dart';
+import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -19,6 +21,7 @@ main() {
   String name;
   String email;
   String password;
+  String token;
 
   PostExpectation mockValidationCall(String field) =>
       when(validation.validate(field: field ?? anyNamed('field'), value: anyNamed('value')));
@@ -33,6 +36,10 @@ main() {
     sut.validatePasswordConfirmation(password);
   }
 
+  PostExpectation mockCreateAccountCall() => when(createAccount.create(any));
+
+  void mockCreateAccountError(DomainError error) => mockCreateAccountCall().thenThrow(error);
+
   setUp(() {
     createAccount = CreateAccountSpy();
     validation = ValidationSpy();
@@ -43,6 +50,7 @@ main() {
     name = faker.person.name();
     email = faker.internet.email();
     password = faker.internet.password();
+    token = faker.guid.guid();
 
     mockValidation();
   });
@@ -233,6 +241,17 @@ main() {
       validateForm();
 
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      await sut.signUp();
+    });
+
+    test('Should emit correct events on account already exists error', () async {
+      mockCreateAccountError(DomainError.alreadyExists);
+      validateForm();
+
+      expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      expectLater(sut.signUpErrorStream, emits(UIError.alreadyExists));
 
       await sut.signUp();
     });
