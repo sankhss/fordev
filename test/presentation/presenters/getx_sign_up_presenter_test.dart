@@ -300,4 +300,14 @@ main() {
       await sut.signUp();
     });
   });
+
+  group('navigation', () {
+    test('Should change page on success', () async {
+      validateForm();
+
+      sut.navigateToStream.listen(expectAsync1((page) => expect(page, '/surveys')));
+
+      await sut.signUp();
+    });
+  });
 }
