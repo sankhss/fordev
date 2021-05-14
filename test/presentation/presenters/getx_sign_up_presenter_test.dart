@@ -1,4 +1,5 @@
 import 'package:faker/faker.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -9,8 +10,11 @@ import 'package:fordev/presentation/protocols/validation.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class CreateAccountSpy extends Mock implements CreateAccount {}
+
 main() {
   GetxSignUpPresenter sut;
+  CreateAccount createAccount;
   Validation validation;
   String name;
   String email;
@@ -22,9 +26,18 @@ main() {
   void mockValidation({String field, ValidationError result}) =>
       mockValidationCall(field).thenReturn(result);
 
+  void validateForm() {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+  }
+
   setUp(() {
+    createAccount = CreateAccountSpy();
     validation = ValidationSpy();
     sut = GetxSignUpPresenter(
+      createAccount: createAccount,
       validation: validation,
     );
     name = faker.person.name();
@@ -187,10 +200,7 @@ main() {
         mockValidation(field: 'name', result: ValidationError.requiredField);
         sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
 
-        sut.validateName(name);
-        sut.validateEmail(email);
-        sut.validatePassword(password);
-        sut.validatePasswordConfirmation(password);
+        validateForm();
       });
 
       test('Should emit form valid if all validation succeed', () async {
@@ -205,6 +215,18 @@ main() {
         sut.validatePasswordConfirmation(password);
         await Future.delayed(Duration.zero);
       });
+    });
+  });
+
+  group('create account', () {
+    test('Should call create account with correct values', () async {
+      validateForm();
+
+      await sut.signUp();
+
+      verify(createAccount.create(CreateAccountParams(
+              name: name, email: email, password: password, passwordConfirmation: password)))
+          .called(1);
     });
   });
 }
