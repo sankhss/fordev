@@ -181,5 +181,30 @@ main() {
         sut.validatePasswordConfirmation(password);
       });
     });
+
+    group('form', () {
+      test('Should emit error if any validation fails', () {
+        mockValidation(field: 'name', result: ValidationError.requiredField);
+        sut.isFormValidStream.listen(expectAsync1((isFormValid) => expect(isFormValid, false)));
+
+        sut.validateName(name);
+        sut.validateEmail(email);
+        sut.validatePassword(password);
+        sut.validatePasswordConfirmation(password);
+      });
+
+      test('Should emit form valid if all validation succeed', () async {
+        expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+        sut.validateName(name);
+        await Future.delayed(Duration.zero);
+        sut.validateEmail(email);
+        await Future.delayed(Duration.zero);
+        sut.validatePassword(password);
+        await Future.delayed(Duration.zero);
+        sut.validatePasswordConfirmation(password);
+        await Future.delayed(Duration.zero);
+      });
+    });
   });
 }
