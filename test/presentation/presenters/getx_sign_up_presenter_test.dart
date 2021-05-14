@@ -228,5 +228,13 @@ main() {
               name: name, email: email, password: password, passwordConfirmation: password)))
           .called(1);
     });
+
+    test('Should emit correct events on create account success', () async {
+      validateForm();
+
+      expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      await sut.signUp();
+    });
   });
 }

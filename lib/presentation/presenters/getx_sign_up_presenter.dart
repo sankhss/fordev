@@ -15,6 +15,7 @@ class GetxSignUpPresenter extends GetxController {
   var _passwordError = Rx<UIError>(null);
   var _passwordConfirmationError = Rx<UIError>(null);
   var _isFormValid = false.obs;
+  var _isLoading = false.obs;
 
   String _name;
   String _email;
@@ -31,8 +32,10 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
   Stream<UIError> get passwordConfirmationErrorStream => _passwordConfirmationError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  Stream<bool> get isLoadingStream => _isLoading.stream;
 
   Future<void> signUp() async {
+    _isLoading.value = true;
     await createAccount.create(
       CreateAccountParams(
           name: _name,
@@ -40,6 +43,7 @@ class GetxSignUpPresenter extends GetxController {
           password: _password,
           passwordConfirmation: _passwordConfirmation),
     );
+    _isLoading.value = false;
   }
 
   void validateName(String name) {
